@@ -27,7 +27,7 @@ const Article=mongoose.model("Article",articleSchema);
 
 //TODO
 
-app.get("/", function(req, res){
+app.route("/articles").get(function(req, res){
   console.log("Estoy aqui");
   Article.find(function(err,articles){
     if(articles===0){
@@ -41,9 +41,7 @@ app.get("/", function(req, res){
       res.send(articles);
     }
   });
-});
-
-app.post("/articles",function(req,res){
+}).post(function(req,res){
   console.log(req.body.title);
   console.log(req.body.content);
 
@@ -61,17 +59,44 @@ app.post("/articles",function(req,res){
     }
 
   });
-});
-
-app.delete("/articles",function(req, res){
+}).delete(function(req, res){
   Article.deleteMany(function(err){
     if(!err)
       res.send("Articles deleted Sucessfuly");
       else
         res.send("An error was occur "+err);
   });
-});
+})
+
+/////////////////One Article ////
+
+app.route("/articles/:postId")
+.get(function(req, res){
+tituloId=quitaEspaciosMayuIdTitle(req.params.postId);
+//tituloId=tituloId.replace(/\s+/g,'-');  //sustituimos espacios en blanco to "-""
+//tituloId=tituloId.toLowerCase();        //convertimos el titulo a minusculas
+console.log(tituloId);
+Article.findOne({title: tituloId},function(err, array){
+  console.log(array);
+  if (array){
+        //  console.log(item.content);
+        res.send(array);
+
+  }
+  else{
+      res.send("No se encontraron registros");
+  }
+  })
+})
+
 
 app.listen(3000, function() {
   console.log("Server started on port 3000");
 });
+
+//Sustituye en el titulo espacios en blanco por "-" y tambien quita mayusculas
+function quitaEspaciosMayuIdTitle(IdTitle){
+  IdTitle=IdTitle.replace(/\s+/g,'-');  //sustituimos espacios en blanco to "-""
+  //IdTitle=IdTitle.toLowerCase();  //convertimos el titulo a minusculas
+  return IdTitle;
+}
