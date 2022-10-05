@@ -72,10 +72,9 @@ app.route("/articles").get(function(req, res){
 
 app.route("/articles/:postId")
 .get(function(req, res){
-tituloId=quitaEspaciosMayuIdTitle(req.params.postId);
-//tituloId=tituloId.replace(/\s+/g,'-');  //sustituimos espacios en blanco to "-""
-//tituloId=tituloId.toLowerCase();        //convertimos el titulo a minusculas
+tituloId=quitaEspaciosMayuIdTitle(req.params.postId); // en este caso solamente quitamos espacios
 console.log(tituloId);
+//buscamos el articulo titleId y lo mostramos
 Article.findOne({title: tituloId},function(err, array){
   console.log(array);
   if (array){
@@ -89,6 +88,22 @@ Article.findOne({title: tituloId},function(err, array){
   })
 })
 
+.put(function(req, res){
+  console.log(req.params.postId);
+  console.log(req.body);
+  Article.replaceOne(
+    {title:req.params.postId},
+    req.body,
+    //{$set: {"title": req.body.title,"content": req.body.content}},
+   function(err){
+    if (!err){
+      res.send("Update Sucessfuly");
+    }
+    else{
+      res.send("An error was occur "+err);
+    }
+  })
+})
 
 app.listen(3000, function() {
   console.log("Server started on port 3000");
