@@ -88,13 +88,12 @@ Article.findOne({title: tituloId},function(err, array){
   })
 })
 
+//Con esta opcion tienes que actualizar todos los registros, en caso de no altualizar un registro este desaparecera
+//in this case we updated all register, if you dont set one register, this register disappear
 .put(function(req, res){
-  console.log(req.params.postId);
-  console.log(req.body);
   Article.replaceOne(
     {title:req.params.postId},
     req.body,
-    //{$set: {"title": req.body.title,"content": req.body.content}},
    function(err){
     if (!err){
       res.send("Update Sucessfuly");
@@ -103,6 +102,35 @@ Article.findOne({title: tituloId},function(err, array){
       res.send("An error was occur "+err);
     }
   })
+})
+
+// solamente actualiza los campos que requieres. Si no seleccionaste un campo este quedara con el valor que ya tenia
+//in this case will update only the register i indicated in the codigo
+.patch(function (req, res){
+  Article.updateOne(
+    {title:req.params.postId},
+    {$set: req.body},
+    function(err){
+      if (!err){
+        res.send("Update Sucessfuly");
+      }
+      else{
+        res.send("An error was occur "+err);
+      }
+    })
+})
+
+.delete(function (req, res){
+  Article.deleteOne(
+    {title:req.params.postId},
+    function(err){
+      if (!err){
+        res.send("Register deleted Sucessfuly");
+      }
+      else{
+        res.send("An error was occur "+err);
+      }
+    })
 })
 
 app.listen(3000, function() {
